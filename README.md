@@ -3,7 +3,7 @@ PyTorch implementation of [Anchor Loss: Modulating loss scale based on predictio
 
 
 ## Anchor Loss
-![anchorloss](https://github.com/slryou41/slryou41.github.io/blob/master/images/overview.png?raw=true | width=500)
+![anchorloss](https://github.com/slryou41/slryou41.github.io/blob/master/images/overview.png?raw=true)
 This code provides anchor loss on image classification. To train the model with anchor loss, include `anchor_loss.py` and call the `AnchorLoss()` function. 
 
 ```python
