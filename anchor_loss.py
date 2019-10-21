@@ -60,7 +60,7 @@ class AnchorLoss(nn.Module):
         if self.warm_up: 
             assert epoch is not None, "If warm_up is set to ``True``, current epoch number is required"
             
-            if epoch <= 5:
+            if epoch < 5:
                 loss = self.ce(input, target)
                 return loss
         
