@@ -57,7 +57,7 @@ class AnchorLoss(nn.Module):
     
     def forward(self, input, target, epoch=None):
         
-        if self.warm_up and not epoch: 
+        if self.warm_up and epoch is None: 
             raise AssertionError ("If warm_up is set to ``True``, current epoch number is required")          
         
         if self.warm_up and epoch < 5:
