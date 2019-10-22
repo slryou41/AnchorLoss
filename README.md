@@ -21,5 +21,10 @@ The default parameter settings are shown above. Details about the parameters are
 
 If you use this code, please cite it:
 ```
-
+@inproceedings{anchorloss_iccv19,
+  title     = {Anchor Loss: Modulating loss scale based on prediction difficulty},
+  author    = {Serim Ryou and Seong-Gyun Jeong and Pietro Perona},
+  booktitle = {ICCV},
+  year = {2019}
+}
 ```
