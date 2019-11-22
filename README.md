@@ -21,5 +21,11 @@ The default parameter settings are shown above. Details about the parameters are
 
 If you use this code, please cite it:
 ```
-
+@InProceedings{Ryou_2019_ICCV,
+  author = {Ryou, Serim and Jeong, Seong-Gyun and Perona, Pietro},
+  title = {Anchor Loss: Modulating Loss Scale Based on Prediction Difficulty},
+  booktitle = {The IEEE International Conference on Computer Vision (ICCV)},
+  month = {October},
+  year = {2019}
+}
 ```
