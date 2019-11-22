@@ -67,7 +67,7 @@ class AnchorLoss(nn.Module):
         target = target.view(-1,1)
         pt = self.sig(input)
         logpt_pos = F.logsigmoid(input)
-        logpt_neg = F.logsigmoid(1-input)
+        logpt_neg = torch.log(1 - pt)
         
         N = input.size(0)
         C = input.size(1)
