@@ -33,7 +33,7 @@ class AnchorLoss(nn.Module):
             - Output: scalar
             
     """
-    def __init__(self, gamma=0.5, slack=0.05, anchor='neg', warm_up=False):
+    def __init__(self, gamma=0.5, slack=0.05, anchor='neg', warm_up=True):
         super(AnchorLoss, self).__init__()
         
         assert anchor in ['neg', 'pos'], "Anchor type should be either ``neg`` or ``pos``"
@@ -44,6 +44,8 @@ class AnchorLoss(nn.Module):
         self.anchor = anchor
         
         self.sig = nn.Sigmoid()
+        self.bce = nn.BCEWithLogitsLoss(reduction='none').cuda()
+        
         if warm_up:
             self.ce = nn.CrossEntropyLoss().cuda()
         
@@ -66,8 +68,6 @@ class AnchorLoss(nn.Module):
         
         target = target.view(-1,1)
         pt = self.sig(input)
-        logpt_pos = F.logsigmoid(input)
-        logpt_neg = torch.log(1 - pt)
         
         N = input.size(0)
         C = input.size(1)
@@ -77,6 +77,8 @@ class AnchorLoss(nn.Module):
         # class_mask = Variable(class_mask)  # pytorch version < 0.4.0
         class_mask = class_mask.cuda()
         class_mask = class_mask.float()
+        
+        bce_loss = self.bce(input, class_mask)
 
         pt_pos = pt.gather(1,target).view(-1,1)
         pt_neg = pt * (1-class_mask)
@@ -84,10 +86,11 @@ class AnchorLoss(nn.Module):
         pt_neg = (pt_neg + self.slack).clamp(max=1).detach()
         pt_pos = (pt_pos - self.slack).clamp(min=0).detach()
         
-        scaling_pos = -1 * (1 - pt + pt_neg).pow(self.gamma_pos)
-        loss_pos = scaling_pos * logpt_pos
-        scaling_neg = -1 * (1 + pt - pt_pos).pow(self.gamma_neg)
-        loss_neg = scaling_neg * logpt_neg
+        scaling_pos = (1 - pt + pt_neg).pow(self.gamma_pos)
+        scaling_neg = (1 + pt - pt_pos).pow(self.gamma_neg)
+        
+        loss_pos = scaling_pos * bce_loss
+        loss_neg = scaling_neg * bce_loss
         
         loss = class_mask * loss_pos + (1 - class_mask) * loss_neg
         loss = loss.sum(1)
@@ -122,4 +125,3 @@ if __name__ == "__main__":
     ce_loss = CE(inputs_ce, targets_ce)
     
     print('ce = {}, al = {}'.format(ce_loss.item(), al_loss.item()))
-
